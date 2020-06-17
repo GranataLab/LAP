@@ -1,14 +1,3 @@
-%{
-- Add in time vs percent for BL (similar to walking)
-- Modify UL
-- convert walking to running and change loading rate
-- Add squatting
-
-
-%}
-
-
-
 % Loadsol Analysis Program
 % Written by Alex Peebles (apeebles@vt.edu) at Virginia Tech
 
@@ -647,92 +636,150 @@ Trial{end+1} = 'StDev';
 
 
 elseif MovementType == 2 %Unilateral landing
-    Trial = [1:handles.nTrials]';
-Trial(handles.closedtrials)=[];
-Trial = num2cell(Trial);
-Trial{end+1} = 'Mean';
-Trial{end+1} = 'StDev';
-    %{
-    - add in slider 
-    - need to open both limbs and line them up for symmetry
+PIFLength =  floor(TimeCut_PIF*.001*handles.SamplingFreq);
+IMPLength =  floor(TimeCut_IMP*.001*handles.SamplingFreq);    
+c2 = 1;
+c3 = 1;
+for t = 1:handles.nTrials
+
+if isempty(handles.closedtrials) || ~any(handles.closedtrials == t)
+    eval(['data = handles.T' num2str(t) '_data;']);
+    eval(['IC_events_2 = handles.T' num2str(t) '_IC_2;'])
+    eval(['IC_events_3 = handles.T' num2str(t) '_IC_3;'])
+    eval(['TO_events_2 = handles.T' num2str(t) '_TO_2;'])
+    eval(['TO_events_3 = handles.T' num2str(t) '_TO_3;'])
     
-    %}
-    
-    StanceCut = 30; % Eventually read from slider
-    TerminalCut = 200;
+                if length(IC_events_2)>length(IC_events_3) % Analyze 2
 
-    c = 1;
-    for t = 1:handles.nTrials
-
-        if isempty(handles.closedtrials) || ~any(handles.closedtrials == t)
-            eval(['data = handles.T' num2str(t) '_data;']);
-            eval(['IC_events_2 = handles.T' num2str(t) '_IC_2;'])
-            eval(['IC_events_3 = handles.T' num2str(t) '_IC_3;'])
-            eval(['TO_events_2 = handles.T' num2str(t) '_TO_2;'])
-            eval(['TO_events_3 = handles.T' num2str(t) '_TO_3;'])
-
-            if length(IC_events_2)>length(IC_events_3) % Analyze 2
-
-                PIFLength =  floor(TerminalCut*.001*handles.SamplingFreq);
                 [peaks,locs] = findpeaks(data(IC_events_2(1):IC_events_2(1)+PIFLength,2));
                 if isempty(locs) %Then just take max
-                    PIF_2(c,1) = IC_events_2(2)+PIFLength;
-                    PIF_2(c,2) = data(IC_events_2(1)+PIFLength,2);
+                    PIF_2(c2,1) = IC_events_2(1)+PIFLength;
+                    PIF_2(c2,2) = data(IC_events_2(1)+PIFLength,2);
+                    LR_2(c2) = PIF_2(c2,2)/PIFLength*handles.SamplingFreq;
                 else
                     [V,I] = sort(peaks,'descend');
-                    PIF_2(c,1) = IC_events_2(1)+locs(I(1));
-                    PIF_2(c,2) = V(1);
+                    PIF_2(c2,1) = IC_events_2(1)+locs(I(1));
+                    PIF_2(c2,2) = V(1);
+                    LR_2(c2) = PIF_2(c2,2)/locs(I(1))*handles.SamplingFreq;
                 end
-
-                First_IMP_2(c) = trapz(data(IC_events_2(1):IC_events_2(1)+PIFLength,1),...
-                    data(IC_events_2(1):IC_events_2(1)+PIFLength,2));
-                c=c+1;
-                eval(['handles.plotpeaks_2_' num2str(t)  '=PIF_2;']);
-            else
-
-                PIFLength =  floor(TerminalCut*.001*handles.SamplingFreq);
+                
+                IMP_2(c2) = trapz(data(IC_events_2(1):IC_events_2(1)+IMPLength,1),...
+                    data(IC_events_2(1):IC_events_2(1)+IMPLength,2));
+                eval(['handles.plotpeaks_2_' num2str(t)  '=PIF_2(c2,:);']);
+                c2=c2+1;
+                else
+                    
                 [peaks,locs] = findpeaks(data(IC_events_3(1):IC_events_3(1)+PIFLength,3));
                 if isempty(locs) %Then just take max
-                    PIF_3(c,1) = IC_events_3(1)+PIFLength;
-                    PIF_3(c,2) = data(IC_events_3(1)+PIFLength,3);
+                    PIF_3(c3,1) = IC_events_3(1)+PIFLength;
+                    PIF_3(c3,2) = data(IC_events_3(1)+PIFLength,3);
+                    LR_3(c3) = PIF_3(c3,2)/PIFLength*handles.SamplingFreq;
                 else
                     [V,I] = sort(peaks,'descend');
-                    PIF_3(c,1) = IC_events_3(1)+locs(I(1));
-                    PIF_3(c,2) = V(1);
+                    PIF_3(c3,1) = IC_events_3(1)+locs(I(1));
+                    PIF_3(c3,2) = V(1);
+                    LR_3(c3) = PIF_3(c3,2)/locs(I(1))*handles.SamplingFreq;
                 end
+                
+                IMP_3(c3) = trapz(data(IC_events_3(1):IC_events_3(1)+IMPLength,1),...
+                    data(IC_events_3(1):IC_events_3(1)+IMPLength,3));
 
-                First_IMP_3(c) = trapz(data(IC_events_3(1):IC_events_3(1)+PIFLength,1),...
-                    data(IC_events_3(1):IC_events_3(1)+PIFLength,3));
+                eval(['handles.plotpeaks_3_' num2str(t)  '=PIF_3(c3,:);']);
+                c3=c3+1;
+                end
+                
+                
+end
 
-                eval(['handles.plotpeaks_3_' num2str(t)  '=PIF_3;']);
-                c=c+1;
+end
+
+    PIF_2 = PIF_2(:,2);
+    PIF_3 = PIF_3(:,2);
+    
+    if length(PIF_2)>length(PIF_3)
+        trim2 = length(PIF_2)-length(PIF_3);
+        trim3 = 0;
+    else
+        trim2 = length(PIF_2)-length(PIF_3);
+        trim3 = 0;        
+    end
+    
+    
+    LSI_method = get(handles.LSI_Method,'Value');
+    if LSI_method == 1%LSI
+        
+        if get(handles.DominantLimb,'Value') == 1
+        PIF_LSI = (mean(PIF_3(1:end-trim3))./mean(PIF_2(1:end-trim2)))*100;
+        LR_LSI = (mean(LR_3(1:end-trim3))./mean(LR_2(1:end-trim2)))*100;
+        IMP_LSI = (mean(IMP_3(1:end-trim3))./mean(IMP_2(1:end-trim2)))*100;
+        else
+        PIF_LSI = (mean(PIF_2(1:end-trim2))./mean(PIF_3(1:end-trim3)))*100;
+        LR_LSI = (mean(LR_2(1:end-trim2))./mean(LR_3(1:end-trim3)))*100;
+        IMP_LSI = (mean(IMP_2(1:end-trim2))./mean(IMP_3(1:end-trim3)))*100;
+        end
+        
+    elseif LSI_method == 2 %ASI
+        
+        PIF_LSI = (abs(mean(PIF_2(1:end-trim2)) - mean(PIF_3(1:end-trim3)))./((mean(PIF_2(1:end-trim2)) + mean(PIF_3(1:end-trim3)))/2))*100;
+        LR_LSI = (abs(mean(LR_2(1:end-trim2)) - mean(LR_3(1:end-trim3)))./((mean(LR_2(1:end-trim2)) + mean(LR_3(1:end-trim3)))/2))*100;
+        IMP_LSI = (abs(mean(IMP_2(1:end-trim2)) - mean(IMP_3(1:end-trim3)))./((mean(IMP_2(1:end-trim2)) + mean(IMP_3(1:end-trim3)))/2))*100;
+
+        
+    else %NSI
+        
+        for j=1:min([length(PIF_2),length(PIF_3)])
+            if get(handles.DominantLimb,'Value') == 1 %2 is dom
+                PIF_LSI(j) = 100*(PIF_2(j) - PIF_3(j))/max([PIF_2;PIF_3]);
+                ILR_LSI(j) = 100*(LR_2(j) - LR_3(j))/max([LR_2;LR_3]);
+                IMP_LSI(j) = 100*(IMP_2(j) - IMP_3(j))/max([IMP_2;IMP_3]);
+            else
+                PIF_LSI(j) = 100*(PIF_3(j) - PIF_2(j))/max([PIF_2;PIF_3]);
+                ILR_LSI(j) = 100*(LR_3(j) - LR_2(j))/max([LR_2;LR_3]);
+                IMP_LSI(j) = 100*(IMP_3(j) - IMP_2(j))/max([IMP_2;IMP_3]);
             end
         end
 
-
-
     end
-
-
-
-
-    if length(IC_events_2)>length(IC_events_3)
-        PIF = [PIF_2(:,2);mean(PIF_2(:,2));std(PIF_2(:,2))];
-        IMP = [First_IMP_2';mean(First_IMP_2);std(First_IMP_2)];
-        eval(['First_PIF_' handles.name2(end) '=PIF_2;'])
-        eval(['First_IMP_' handles.name2(end) '=IMP;'])
-        T = table(Trial,PIF,IMP);
-
+    
+    Step = [1:min([length(PIF_2),length(PIF_3)])]';
+    Step = num2cell(Step);
+    Step{end+1} = 'Mean';
+    Step{end+1} = 'StDev';
+    
+    if LSI_method == 3 %NSI
+    PIF_LSI = [PIF_LSI;mean(PIF_LSI);std(PIF_LSI)];
+    LR_LSI = [LR_LSI';mean(LR_LSI);std(LR_LSI)];
+    IMP_LSI = [IMP_LSI';mean(IMP_LSI);std(IMP_LSI)];
     else
-
-        PIF_3 = [PIF_3;mean(PIF_3);std(PIF_3)];
-        First_IMP_3 = [First_IMP_3;mean(First_IMP_3);std(First_IMP_3)];
-        eval(['First_PIF_' handles.name3(end) '=PIF_3;'])
-        eval(['First_IMP_' handles.name3(end) '=IMP_3;'])
-        eval(['T = table(Trial,First_PIF_' handles.name3(end) ',First_IMP_' handles.name3(end) ')'])
+    PIF_LSI = [nan(min([length(PIF_2),length(PIF_3)]),1);PIF_LSI;nan];
+    LR_LSI = [nan(min([length(PIF_2),length(PIF_3)]),1);LR_LSI;nan];
+    IMP_LSI = [nan(min([length(PIF_2),length(PIF_3)]),1);IMP_LSI;nan];
     end
 
+    PIF_2 = [PIF_2(1:end-trim2);mean(PIF_2(1:end-trim2));std(PIF_2(1:end-trim2))];
+    PIF_3 = [PIF_3(1:end-trim3);mean(PIF_3(1:end-trim3));std(PIF_3(1:end-trim3))];
 
+
+    LR_2 = [LR_2(1:end-trim2)';mean(LR_2(1:end-trim2));std(LR_2(1:end-trim2))];
+    LR_3 = [LR_3(1:end-trim3)';mean(LR_3(1:end-trim3));std(LR_3(1:end-trim3))];
+
+    
+    IMP_2 = [IMP_2(1:end-trim2)';mean(IMP_2(1:end-trim2));std(IMP_2(1:end-trim2))];
+    IMP_3 = [IMP_3(1:end-trim3)';mean(IMP_3(1:end-trim3));std(IMP_3(1:end-trim3))];
+   
+    
+    eval(['PIF_' handles.name2(end) '=PIF_2;'])
+    eval(['PIF_' handles.name3(end) '=PIF_3;'])
+    eval(['LR_' handles.name2(end) '=LR_2;'])
+    eval(['LR_' handles.name3(end) '=LR_3;'])
+    eval(['IMP_' handles.name2(end) '=IMP_2;'])
+    eval(['IMP_' handles.name3(end) '=IMP_3;'])
+    
+
+
+    eval(['T = table(Step,PIF_' handles.name2(end) ',PIF_' handles.name3(end) ',PIF_LSI,'...
+        'LR_' handles.name2(end) ',LR_' handles.name3(end) ',LR_LSI,'...
+        'IMP_' handles.name2(end) ',IMP_' handles.name3(end) ',IMP_LSI)'])
 
     selpath = uigetdir(handles.fpath);
     answer = inputdlg({'input file name','input condition name'});
