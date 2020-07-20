@@ -1,4 +1,4 @@
-% Loadsol Analysis Program
+% Load Analysis Program
 % Written by Alex Peebles (apeebles@vt.edu) at Virginia Tech
 
 % If you use this program for research, please cite this paper: 
@@ -506,12 +506,12 @@ Trial{end+1} = 'StDev';
 
 
 
-    First_PIF_2 = First_PIF_2(:,2);
-    First_PIF_3 = First_PIF_3(:,2);
+    First_PIF_2 = First_PIF_2(:,2)';
+    First_PIF_3 = First_PIF_3(:,2)';
     
     if length(IC_events_2)>1 && length(IC_events_3)>1
-     Second_PIF_2 = Second_PIF_2(:,2);   
-     Second_PIF_3 = Second_PIF_3(:,2);
+     Second_PIF_2 = Second_PIF_2(:,2)';   
+     Second_PIF_3 = Second_PIF_3(:,2)';
     end
     
     LSI_method = get(handles.LSI_Method,'Value');
@@ -552,22 +552,22 @@ Trial{end+1} = 'StDev';
         
         for j=1:length(First_IMP_2)
             if get(handles.DominantLimb,'Value') == 1 %2 is dom
-                First_PIF_LSI(j) = 100*(First_PIF_2(j) - First_PIF_3(j))/max([First_PIF_2;First_PIF_3]);
-                First_LR_LSI(j) = 100*(First_LR_2(j) - First_LR_3(j))/max([First_LR_2;First_LR_3]);
-                First_IMP_LSI(j) = 100*(First_IMP_2(j) - First_IMP_3(j))/max([First_IMP_2;First_IMP_3]);
+                First_PIF_LSI(j) = 100*(First_PIF_2(j) - First_PIF_3(j))/max([First_PIF_2,First_PIF_3]);
+                First_LR_LSI(j) = 100*(First_LR_2(j) - First_LR_3(j))/max([First_LR_2,First_LR_3]);
+                First_IMP_LSI(j) = 100*(First_IMP_2(j) - First_IMP_3(j))/max([First_IMP_2,First_IMP_3]);
                 if length(IC_events_2)>1 && length(IC_events_3)>1
-                Second_PIF_LSI(j) = 100*(Second_PIF_2(j) - Second_PIF_3(j))/max([Second_PIF_2;Second_PIF_3]);
-                Second_LR_LSI(j) = 100*(Second_LR_2(j) - Second_LR_3(j))/max([Second_LR_2;Second_LR_3]);
-                Second_IMP_LSI(j) = 100*(Second_IMP_2(j) - Second_IMP_3(j))/max([Second_IMP_2;Second_IMP_3]);
+                Second_PIF_LSI(j) = 100*(Second_PIF_2(j) - Second_PIF_3(j))/max([Second_PIF_2,Second_PIF_3]);
+                Second_LR_LSI(j) = 100*(Second_LR_2(j) - Second_LR_3(j))/max([Second_LR_2,Second_LR_3]);
+                Second_IMP_LSI(j) = 100*(Second_IMP_2(j) - Second_IMP_3(j))/max([Second_IMP_2,Second_IMP_3]);
                 end
             else
-                First_PIF_LSI(j) = 100*(First_PIF_3(j) - First_PIF_2(j))/max([First_PIF_2;First_PIF_3]);
-                First_LR_LSI(j) = 100*(First_LR_3(j) - First_LR_2(j))/max([First_LR_2;First_LR_3]);
-                First_IMP_LSI(j) = 100*(First_IMP_3(j) - First_IMP_2(j))/max([First_IMP_2;First_IMP_3]);
+                First_PIF_LSI(j) = 100*(First_PIF_3(j) - First_PIF_2(j))/max([First_PIF_2,First_PIF_3]);
+                First_LR_LSI(j) = 100*(First_LR_3(j) - First_LR_2(j))/max([First_LR_2,First_LR_3]);
+                First_IMP_LSI(j) = 100*(First_IMP_3(j) - First_IMP_2(j))/max([First_IMP_2,First_IMP_3]);
                 if length(IC_events_2)>1 && length(IC_events_3)>1
-                Second_PIF_LSI(j) = 100*(Second_PIF_3(j) - Second_PIF_2(j))/max([Second_PIF_2;Second_PIF_3]);
-                Second_LR_LSI(j) = 100*(Second_LR_3(j) - Second_LR_2(j))/max([Second_LR_2;Second_LR_3]);
-                Second_IMP_LSI(j) = 100*(Second_IMP_3(j) - Second_IMP_2(j))/max([Second_IMP_2;Second_IMP_3]);
+                Second_PIF_LSI(j) = 100*(Second_PIF_3(j) - Second_PIF_2(j))/max([Second_PIF_2,Second_PIF_3]);
+                Second_LR_LSI(j) = 100*(Second_LR_3(j) - Second_LR_2(j))/max([Second_LR_2,Second_LR_3]);
+                Second_IMP_LSI(j) = 100*(Second_IMP_3(j) - Second_IMP_2(j))/max([Second_IMP_2,Second_IMP_3]);
                 end
             end
         end
@@ -575,9 +575,9 @@ Trial{end+1} = 'StDev';
     end
 
 
-    First_PIF_2 = [First_PIF_2;mean(First_PIF_2);std(First_PIF_2)];
-    First_PIF_3 = [First_PIF_3;mean(First_PIF_3);std(First_PIF_3)];
-    First_PIF_LSI = [First_PIF_LSI;mean(First_PIF_LSI);std(First_PIF_LSI)];
+    First_PIF_2 = [First_PIF_2';mean(First_PIF_2);std(First_PIF_2)];
+    First_PIF_3 = [First_PIF_3';mean(First_PIF_3);std(First_PIF_3)];
+    First_PIF_LSI = [First_PIF_LSI';mean(First_PIF_LSI);std(First_PIF_LSI)];
     
     First_LR_2 = [First_LR_2';mean(First_LR_2);std(First_LR_2)];
     First_LR_3 = [First_LR_3';mean(First_LR_3);std(First_LR_3)];
@@ -596,9 +596,9 @@ Trial{end+1} = 'StDev';
     
     
     if length(IC_events_2)>1 && length(IC_events_3)>1
-    Second_PIF_2 = [Second_PIF_2;mean(Second_PIF_2);std(Second_PIF_2)];
-    Second_PIF_3 = [Second_PIF_3;mean(Second_PIF_3);std(Second_PIF_3)];
-    Second_PIF_LSI = [Second_PIF_LSI;mean(Second_PIF_LSI);std(Second_PIF_LSI)];
+    Second_PIF_2 = [Second_PIF_2';mean(Second_PIF_2);std(Second_PIF_2)];
+    Second_PIF_3 = [Second_PIF_3';mean(Second_PIF_3);std(Second_PIF_3)];
+    Second_PIF_LSI = [Second_PIF_LSI';mean(Second_PIF_LSI);std(Second_PIF_LSI)];
 
     Second_LR_2 = [Second_LR_2';mean(Second_LR_2);std(Second_LR_2)];
     Second_LR_3 = [Second_LR_3';mean(Second_LR_3);std(Second_LR_3)];
@@ -907,8 +907,8 @@ elseif MovementType == 3 %Gait
     end
         
 
-    PIF_2 = PIF_2(:,2);
-    PIF_3 = PIF_3(:,2);
+    PIF_2 = PIF_2(:,2)';
+    PIF_3 = PIF_3(:,2)';
     
     if length(PIF_2)>length(PIF_3)
         trim2 = length(PIF_2)-length(PIF_3);
@@ -946,15 +946,15 @@ elseif MovementType == 3 %Gait
         
         for j=1:min([length(PIF_2),length(PIF_3)])
             if get(handles.DominantLimb,'Value') == 1 %2 is dom
-                PIF_LSI(j) = 100*(PIF_2(j) - PIF_3(j))/max([PIF_2;PIF_3]);
-                ILR_LSI(j) = 100*(ILR_2(j) - ILR_3(j))/max([ILR_2;ILR_3]);
-                ALR_LSI(j) = 100*(ALR_2(j) - ALR_3(j))/max([ALR_2;ALR_3]);
-                IMP_LSI(j) = 100*(IMP_2(j) - IMP_3(j))/max([IMP_2;IMP_3]);
+                PIF_LSI(j) = 100*(PIF_2(j) - PIF_3(j))/max([PIF_2,PIF_3]);
+                ILR_LSI(j) = 100*(ILR_2(j) - ILR_3(j))/max([ILR_2,ILR_3]);
+                ALR_LSI(j) = 100*(ALR_2(j) - ALR_3(j))/max([ALR_2,ALR_3]);
+                IMP_LSI(j) = 100*(IMP_2(j) - IMP_3(j))/max([IMP_2,IMP_3]);
             else
-                PIF_LSI(j) = 100*(PIF_3(j) - PIF_2(j))/max([PIF_2;PIF_3]);
-                ILR_LSI(j) = 100*(ILR_3(j) - ILR_2(j))/max([ILR_2;ILR_3]);
-                ALR_LSI(j) = 100*(ALR_3(j) - ALR_2(j))/max([ALR_2;ALR_3]);
-                IMP_LSI(j) = 100*(IMP_3(j) - IMP_2(j))/max([IMP_2;IMP_3]);
+                PIF_LSI(j) = 100*(PIF_3(j) - PIF_2(j))/max([PIF_2,PIF_3]);
+                ILR_LSI(j) = 100*(ILR_3(j) - ILR_2(j))/max([ILR_2,ILR_3]);
+                ALR_LSI(j) = 100*(ALR_3(j) - ALR_2(j))/max([ALR_2,ALR_3]);
+                IMP_LSI(j) = 100*(IMP_3(j) - IMP_2(j))/max([IMP_2,IMP_3]);
             end
         end
 
@@ -965,9 +965,9 @@ elseif MovementType == 3 %Gait
     Step{end+1} = 'Mean';
     Step{end+1} = 'StDev';
 
-    PIF_2 = [PIF_2(1:end-trim2);mean(PIF_2(1:end-trim2));std(PIF_2(1:end-trim2))];
-    PIF_3 = [PIF_3(1:end-trim3);mean(PIF_3(1:end-trim3));std(PIF_3(1:end-trim3))];
-    PIF_LSI = [PIF_LSI;mean(PIF_LSI);std(PIF_LSI)];
+    PIF_2 = [PIF_2(1:end-trim2)';mean(PIF_2(1:end-trim2));std(PIF_2(1:end-trim2))];
+    PIF_3 = [PIF_3(1:end-trim3)';mean(PIF_3(1:end-trim3));std(PIF_3(1:end-trim3))];
+    PIF_LSI = [PIF_LSI';mean(PIF_LSI);std(PIF_LSI)];
 
     ILR_2 = [ILR_2(1:end-trim2)';mean(ILR_2(1:end-trim2));std(ILR_2(1:end-trim2))];
     ILR_3 = [ILR_3(1:end-trim3)';mean(ILR_3(1:end-trim3));std(ILR_3(1:end-trim3))];
@@ -1019,7 +1019,7 @@ elseif MovementType == 4 %Squatting
 
         plot(data(lks2,1),pks2,'k o',data(lks3,1),pks3,'ko','MarkerSize',15)
         
-        set(handles.UserMessageBox,'String',['Click on any missidentified peaks for ' handles.name2])
+        set(handles.UserMessageBox,'String',['Click on any missidentified peaks for ' handles.name2 ' or click after the end of the trial if no misidentified peaks'])
         clicks = ginput(10);
         
 
@@ -1034,7 +1034,7 @@ elseif MovementType == 4 %Squatting
         lks2(isnan(lks2)) = [];
         end
         
-        set(handles.UserMessageBox,'String',['Click on any missidentified peaks for ' handles.name3])
+        set(handles.UserMessageBox,'String',['Click on any missidentified peaks for ' handles.name3 ' or click after the end of the trial if no misidentified peaks'])
         clicks = ginput(10);
         
 
@@ -1085,11 +1085,11 @@ elseif MovementType == 4 %Squatting
         
         for j=1:length(IMP_2)
             if get(handles.DominantLimb,'Value') == 1 %2 is dom
-                PF_LSI(j) = 100*(PF_2(j) - PF_3(j))/max([PF_2;PF_3]);
-                IMP_LSI(j) = 100*(IMP_2(j) - IMP_3(j))/max([IMP_2;IMP_3]);
+                PF_LSI(j) = 100*(PF_2(j) - PF_3(j))/max([PF_2,PF_3]);
+                IMP_LSI(j) = 100*(IMP_2(j) - IMP_3(j))/max([IMP_2,IMP_3]);
             else
-                PF_LSI(j) = 100*(PF_3(j) - PF_2(j))/max([PF_2;PF_3]);
-                IMP_LSI(j) = 100*(IMP_3(j) - IMP_2(j))/max([IMP_2;IMP_3]);
+                PF_LSI(j) = 100*(PF_3(j) - PF_2(j))/max([PF_2,PF_3]);
+                IMP_LSI(j) = 100*(IMP_3(j) - IMP_2(j))/max([IMP_2,IMP_3]);
             end
         end
 
